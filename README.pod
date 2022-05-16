@@ -13,7 +13,7 @@ L<https://noiseprotocol.org/>
 
 =head2 EXAMPLE
 
-L<t/>
+see also t/ directory
 
 =head1 Handshake FUNCTION
 
