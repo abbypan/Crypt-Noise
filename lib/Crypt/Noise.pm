@@ -544,7 +544,7 @@ sub write_message {
     ### write message pattern: $m
     if ( $m eq 'e' ) {
 
-      my $e_key_r = generate_ec_key( $cnf->{ec_params}{group}, undef, 2, $cnf->{ec_params}{ctx} );
+      my $e_key_r = generate_ec_key( $cnf->{ec_params}{group}, undef );
       $hs->{e_pub}      = $e_key_r->{pub_pkey};
       $hs->{e_priv}     = $e_key_r->{priv_pkey};
       $hs->{e_pub_bin}  = $e_key_r->{pub_bin};
@@ -562,21 +562,21 @@ sub write_message {
       my $s_pub_info = $cnf->{msg_pack_func}->( [ $hs->{s_pub_type}, $hs->{s_pub_bin} ] );
       $out = encrypt_and_hash( $cnf, $out, $hs->{ss}, $s_pub_info );
     } elsif ( $m eq 'ee' ) {
-      mix_key( $cnf, $hs->{ss}, ecdh_pkey( $hs->{e_priv}, $hs->{re_pub} ) );
+      mix_key( $cnf, $hs->{ss}, pack("H*", ecdh( $hs->{e_priv}, $hs->{re_pub} )) );
     } elsif ( $m eq 'es' ) {
       if ( $hs->{initiator} ) {
-        mix_key( $cnf, $hs->{ss}, ecdh_pkey( $hs->{e_priv}, $hs->{rs_pub} ) );
+        mix_key( $cnf, $hs->{ss}, pack("H*", ecdh( $hs->{e_priv}, $hs->{rs_pub} )) );
       } else {
-        mix_key( $cnf, $hs->{ss}, ecdh_pkey( $hs->{s_priv}, $hs->{re_pub} ) );
+        mix_key( $cnf, $hs->{ss}, pack("H*", ecdh( $hs->{s_priv}, $hs->{re_pub} )) );
       }
     } elsif ( $m eq 'se' ) {
       if ( $hs->{initiator} ) {
-        mix_key( $cnf, $hs->{ss}, ecdh_pkey( $hs->{s_priv}, $hs->{re_pub} ) );
+        mix_key( $cnf, $hs->{ss}, pack("H*", ecdh( $hs->{s_priv}, $hs->{re_pub} )) );
       } else {
-        mix_key( $cnf, $hs->{ss}, ecdh_pkey( $hs->{e_priv}, $hs->{rs_pub} ) );
+        mix_key( $cnf, $hs->{ss}, pack("H*", ecdh( $hs->{e_priv}, $hs->{rs_pub} )) );
       }
     } elsif ( $m eq 'ss' ) {
-      mix_key( $cnf, $hs->{ss}, ecdh_pkey( $hs->{s_priv}, $hs->{rs_pub} ) );
+      mix_key( $cnf, $hs->{ss}, pack("H*", ecdh( $hs->{s_priv}, $hs->{rs_pub} )) );
     } elsif ( $m eq 'psk' ) {
       mix_keyandhash( $cnf, $hs->{ss}, $hs->{psk} );
     }
@@ -646,21 +646,21 @@ sub read_message {
 
       $i++;
     } elsif ( $m eq 'ee' ) {
-      mix_key( $cnf, $hs->{ss}, ecdh_pkey( $hs->{e_priv}, $hs->{re_pub} ) );
+      mix_key( $cnf, $hs->{ss}, pack("H*", ecdh( $hs->{e_priv}, $hs->{re_pub} )) );
     } elsif ( $m eq 'es' ) {
       if ( $hs->{initiator} ) {
-        mix_key( $cnf, $hs->{ss}, ecdh_pkey( $hs->{e_priv}, $hs->{rs_pub} ) );
+        mix_key( $cnf, $hs->{ss}, pack("H*", ecdh( $hs->{e_priv}, $hs->{rs_pub} )) );
       } else {
-        mix_key( $cnf, $hs->{ss}, ecdh_pkey( $hs->{s_priv}, $hs->{re_pub} ) );
+        mix_key( $cnf, $hs->{ss}, pack("H*",  ecdh( $hs->{s_priv}, $hs->{re_pub} )) );
       }
     } elsif ( $m eq 'se' ) {
       if ( $hs->{initiator} ) {
-        mix_key( $cnf, $hs->{ss}, ecdh_pkey( $hs->{s_priv}, $hs->{re_pub} ) );
+        mix_key( $cnf, $hs->{ss}, pack("H*", ecdh( $hs->{s_priv}, $hs->{re_pub} )) );
       } else {
-        mix_key( $cnf, $hs->{ss}, ecdh_pkey( $hs->{e_priv}, $hs->{rs_pub} ) );
+        mix_key( $cnf, $hs->{ss}, pack("H*", ecdh( $hs->{e_priv}, $hs->{rs_pub} )) );
       }
     } elsif ( $m eq 'ss' ) {
-      mix_key( $cnf, $hs->{ss}, ecdh_pkey( $hs->{s_priv}, $hs->{rs_pub} ) );
+      mix_key( $cnf, $hs->{ss}, pack("H*", ecdh( $hs->{s_priv}, $hs->{rs_pub} )) );
     } elsif ( $m eq 'psk' ) {
       mix_keyandhash( $cnf, $hs->{ss}, $hs->{psk} );
     }
